@@ -29,7 +29,7 @@ import Header from "../../components/Header";
 import Feather from "react-native-vector-icons/Feather";
 import api from "../../services/api";
 import Select from "../../components/Select/index.android";
-import * as ImagePicker from "expo-image-picker";
+import * as ImagePicker from "react-native-image-picker";
 
 interface ProfileFormData {
   name: string;
@@ -39,26 +39,6 @@ interface ProfileFormData {
   rg?: string;
   cpf: string;
 }
-
-//   const schema = Yup.object().shape({
-//     name: Yup.string()
-//       .matches(/^[a-zA-Z\u00C0-\u00FF ]+$/i, "Digite apenas letras")
-//       .required("Nome obrigatório"),
-//     phone: Yup.string()
-//       .matches(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Digite um número válido")
-//       .required("Celular obrigatório"),
-//     cpf: Yup.string().matches(
-//       /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
-//       "Digite um CPF válido"
-//     ),
-//     rg: Yup.string().length(10, "Digite um RG válido"),
-//     gender: Yup.string()
-//       .oneOf(["male", "female", "not-informed"])
-//       .required("Gênero obrigatório"),
-//     nature: Yup.string()
-//       .oneOf(["physic", "juridic"])
-//       .required("Natureza obrigatória"),
-//   });
 
 const Profile: React.FC = () => {
   const { user, updateUser } = useAuth();
@@ -71,28 +51,8 @@ const Profile: React.FC = () => {
     setUserData((oldUser) => ({ ...oldUser, [field]: value }));
   }, []);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const {
-  //       status,
-  //     } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  //     if (status !== "granted") {
-  //       alert("Desculpe, precisamos de permissões do rolo da câmera!");
-  //     }
-  //   })();
-  // }, []);
-
-  const handleUpdateAvatar = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 4],
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      setUserAvatar(result.uri);
-    }
+  const handleUpdateAvatar = (avatar: any) => {
+    setUserAvatar(avatar.uri);
 
     const data = new FormData();
 
@@ -136,10 +96,6 @@ const Profile: React.FC = () => {
   const handleSubmit = useCallback(
     async (data: ProfileFormData) => {
       try {
-        // await schema.validate(data, {
-        //   abortEarly: false,
-        // });
-
         data.phone = data.phone.replace(/[\(\)\s-]/g, "");
 
         data.cpf = data.cpf.replace(/[\.-]/g, "");
@@ -186,7 +142,14 @@ const Profile: React.FC = () => {
           <TitleText>Editar Perfil</TitleText>
         </Title>
         <Line />
-        <UserAvatarButton onPress={handleUpdateAvatar}>
+        <UserAvatarButton
+          onPress={() =>
+            ImagePicker.launchImageLibrary(
+              { mediaType: "photo" },
+              handleUpdateAvatar
+            )
+          }
+        >
           <Feather name="camera" size={18} color="#fff" />
         </UserAvatarButton>
         {user.avatar_url ? (
@@ -198,6 +161,7 @@ const Profile: React.FC = () => {
         )}
         <UserName>{user.name}</UserName>
         <Input
+          isCustom={false}
           name="name"
           autoCapitalize="words"
           icon="user"
@@ -205,9 +169,11 @@ const Profile: React.FC = () => {
           returnKeyType="next"
           defaultValue={userData.name}
           onChangeText={(name: string) => handleChangeUserField("name", name)}
+          onSubmitEditing={() => {}}
         />
 
         <Input
+          isCustom={false}
           mask="phone"
           defaultValue={String(userData.phone)
             .replace(/^(\d{2})(\d)/g, "($1) $2")
@@ -225,6 +191,7 @@ const Profile: React.FC = () => {
         />
 
         <Input
+          isCustom={false}
           defaultValue={userData.rg}
           keyboardType="number-pad"
           name="rg"
@@ -236,6 +203,7 @@ const Profile: React.FC = () => {
         />
 
         <Input
+          isCustom={false}
           mask="cpf"
           defaultValue={userData.cpf.replace(
             /^(\d{3})(\d{3})(\d{3})/,

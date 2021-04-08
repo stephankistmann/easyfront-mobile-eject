@@ -9,7 +9,7 @@ interface IInputProps extends TextInputProps {
   placeholder: string;
   mask?: "cpf" | "phone";
   inputMaskChange?: any;
-  isCustom?: boolean;
+  isCustom: boolean;
 }
 
 const Input: React.FC<IInputProps> = ({
@@ -39,7 +39,9 @@ const Input: React.FC<IInputProps> = ({
 
   return (
     <Container isFocused={isFocused} isCustom={isCustom}>
-      <Icon name={icon} size={20} color={isFocused ? "#69aaf5" : "#666360"} />
+      {icon && (
+        <Icon name={icon} size={20} color={isFocused ? "#69aaf5" : "#666360"} />
+      )}
       <TextInput
         isCustom={isCustom}
         onFocus={handleInputFocus}
