@@ -8,6 +8,7 @@ import Profile from "../../pages/Profile";
 import Events from "../../pages/EventsPage";
 import Devices from "../../pages/Devices";
 import DefaultError from "../../pages/DefaultError";
+import CallRecieving from "../../pages/CallRecieving";
 
 const Restricted = createDrawerNavigator();
 
@@ -25,6 +26,8 @@ const RestrictedRoutes: React.FC = () => (
     <Restricted.Screen name="TagsStack" component={TagsStack} />
     <Restricted.Screen name="Events" component={Events} />
     <Restricted.Screen name="Devices" component={Devices} />
+    <Restricted.Screen name="CallRecieving" component={CallRecieving} />
+
     <Restricted.Screen name="DefaultError" component={DefaultError} />
   </Restricted.Navigator>
 );
